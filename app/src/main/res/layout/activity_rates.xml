@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.mad.rates.RatesViewAnimator
+        android:id="@+id/contentContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".RatesActivity">
+
+        <include layout="@layout/progress_layout_full_size" />
+
+        <include layout="@layout/rates_layout" />
+
+        <include layout="@layout/error_layout" />
+
+    </com.mad.rates.RatesViewAnimator>
+
+</LinearLayout>

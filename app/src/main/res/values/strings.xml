@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Rates App</string>
+    <string name="rates_header">Rates</string>
+    <string name="error_title">Oops!</string>
+    <string name="error_message">Something went wrong.\nCheck your internet connection.</string>
+    <string name="rate_empty_input_hint">0</string>
+</resources>

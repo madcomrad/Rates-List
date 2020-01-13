@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="margin_medium">16dp</dimen>
+
+    <dimen name="icon_size">40dp</dimen>
+
+    <dimen name="text_size_large">20sp</dimen>
+    <dimen name="text_size_medium">16sp</dimen>
+    <dimen name="text_size_small">14sp</dimen>
+
+    <dimen name="rate_edit_min_width">100dp</dimen>
+
+    <dimen name="header_height">56dp</dimen>
+    <dimen name="header_padding_start">72dp</dimen>
+</resources>
