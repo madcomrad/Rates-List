@@ -3,6 +3,7 @@ package com.mad.rates
 import android.util.Log
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.*
+import com.mad.network.RatesModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.Channel
@@ -27,7 +28,7 @@ class RatesViewModel(private val ratesRepository: RatesRepositoryInterface = Rat
     @VisibleForTesting
     private val internalRatesResult: LiveData<Result<RatesModel>> = queryChannel.asFlow().mapLatest { base ->
         try {
-            withContext(ioDispatcher) { ratesRepository.getRates(base.currency.symbol) }
+            withContext(ioDispatcher) { ratesRepository.getRates(base.currency.symbol).toResult() }
         } catch (e: Throwable) {
             if (e !is CancellationException) Result.Failure<RatesModel>() else throw e
         }
@@ -89,7 +90,7 @@ class RatesViewModel(private val ratesRepository: RatesRepositoryInterface = Rat
 }
 
 @Suppress("UNCHECKED_CAST")
-class RatesViewModelFactory(private val apiProvider: NetworkApiProviderInterface = NetworkApiProvider(), private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO) : ViewModelProvider.Factory {
+class RatesViewModelFactory(private val apiProvider: com.mad.network.NetworkApiProviderInterface = com.mad.network.NetworkApiProvider(), private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(RatesViewModel::class.java)) {
             return RatesViewModel(RatesRepository(apiProvider), ioDispatcher) as T

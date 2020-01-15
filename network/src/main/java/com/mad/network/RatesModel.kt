@@ -1,4 +1,4 @@
-package com.mad.rates
+package com.mad.network
 
 import com.google.gson.annotations.SerializedName
 

@@ -1,4 +1,4 @@
-package com.mad.rates
+package com.mad.network
 
 import android.util.Log
 import com.google.gson.Gson

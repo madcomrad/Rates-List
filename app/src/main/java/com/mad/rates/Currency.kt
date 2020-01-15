@@ -2,6 +2,7 @@ package com.mad.rates
 
 import android.content.Context
 import androidx.appcompat.content.res.AppCompatResources
+import com.mad.network.RatesModel
 import java.math.BigDecimal
 
 const val USD_SYMBOL = "USD"
