@@ -1,9 +1,15 @@
-package com.mad.rates
+package com.mad.rates.viewmodel
 
 import android.util.Log
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.*
 import com.mad.network.RatesModel
+import com.mad.rates.Result
+import com.mad.rates.model.CurrencyRateInfo
+import com.mad.rates.model.toCurrencyRateInfoList
+import com.mad.rates.repository.RatesRepository
+import com.mad.rates.repository.RatesRepositoryInterface
+import com.mad.rates.toResult
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.Channel
@@ -20,19 +26,19 @@ class RatesViewModel(private val ratesRepository: RatesRepositoryInterface = Rat
 
     private var updateJob: Job? = null
 
-    @VisibleForTesting
-    private val queryChannel = BroadcastChannel<CurrencyRateInfo>(Channel.CONFLATED)
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    internal val queryChannel = BroadcastChannel<CurrencyRateInfo>(Channel.CONFLATED)
 
     private lateinit var baseCurrencyRateInfo: CurrencyRateInfo
 
-    @VisibleForTesting
     private val internalRatesResult: LiveData<Result<RatesModel>> = queryChannel.asFlow().mapLatest { base ->
         try {
             withContext(ioDispatcher) { ratesRepository.getRates(base.currency.symbol).toResult() }
         } catch (e: Throwable) {
             if (e !is CancellationException) Result.Failure<RatesModel>() else throw e
         }
-    }.catch {
+    }.catch { e ->
+        Log.e(TAG, e.message ?: "")
         emit(Result.Failure())
     }.asLiveData()
 
@@ -56,25 +62,19 @@ class RatesViewModel(private val ratesRepository: RatesRepositoryInterface = Rat
 
             rates.toCurrencyRateInfoList(baseCurrencyRateInfo).sortedBy { currencyRateInfo ->
                 orderMap[currencyRateInfo.currency.symbol]
-            }.toMutableList().also {
-                it.forEach { cr ->
-                    Log.d(TAG, "$cr")
-                }
-            }
+            }.toMutableList()
         }.apply { add(0, baseCurrencyRateInfo) }
     }
 
     fun setMultiplier(multiplier: BigDecimal?) {
         baseCurrencyRateInfo = baseCurrencyRateInfo.copy(multiplier = multiplier)
-        Log.d(TAG, "setMultiplier $baseCurrencyRateInfo")
-        startRepeatingRequests()
     }
 
-    private fun startRepeatingRequests() {
+    fun startRepeatingRequests() {
         updateJob?.cancel()
         updateJob = viewModelScope.launch {
+            queryChannel.offer(baseCurrencyRateInfo)
             while (isActive) {
-                Log.d(TAG, "queryChannel send $baseCurrencyRateInfo")
                 queryChannel.offer(baseCurrencyRateInfo)
                 delay(RATES_REQUEST_INTERVAL)
             }
@@ -83,8 +83,6 @@ class RatesViewModel(private val ratesRepository: RatesRepositoryInterface = Rat
 
     fun setBase(currencyRateInfo: CurrencyRateInfo) {
         baseCurrencyRateInfo = currencyRateInfo.copy(rate = BigDecimal.ONE, multiplier = currencyRateInfo.multiplier?.let { currencyRateInfo.rate * it })
-        Log.d(TAG, "setBase $baseCurrencyRateInfo")
-        startRepeatingRequests()
     }
 
 }

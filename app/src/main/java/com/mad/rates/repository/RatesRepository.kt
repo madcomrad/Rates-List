@@ -1,4 +1,4 @@
-package com.mad.rates
+package com.mad.rates.repository
 
 import com.mad.network.RatesModel
 import retrofit2.Response

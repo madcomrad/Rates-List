@@ -2,7 +2,6 @@ package com.mad.network
 
 
 import com.google.gson.Gson
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.Dispatcher
@@ -18,12 +17,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 import javax.net.ssl.HttpsURLConnection
 
 
-class RatesTest {
-
-//    @get:Rule
-//    var rule: TestRule = InstantTaskExecutorRule()
-//
-//    private val mainDispatcher = TestCoroutineDispatcher()
+@Suppress("BlockingMethodInNonBlockingContext")
+class RatesNetworkTest {
 
     private val mockWebServer = MockWebServer()
 
@@ -42,7 +37,6 @@ class RatesTest {
 
     @Before
     fun setUp() {
-//        Dispatchers.setMain(mainDispatcher)
         mockWebServer.start()
         mockWebServer.dispatcher = dispatcher
     }
@@ -50,18 +44,24 @@ class RatesTest {
     @After
     fun teardown() {
         mockWebServer.shutdown()
-//        Dispatchers.resetMain()
     }
 
     @Test
     fun requestTest() {
-        val networkApiProvider: NetworkApiProviderInterface = TestNetworkApiProvider(mockWebServer.url("").toString())
         runBlocking {
-            val responseEur = networkApiProvider.ratesAPI.getRates("EUR")
+            TestNetworkApiProvider(mockWebServer.url("").toString()).ratesAPI.getRates("EUR")
             mockWebServer.takeRequest().also { recordedRequest ->
                 Assert.assertEquals(recordedRequest.method, "GET")
                 Assert.assertEquals(recordedRequest.path, "/latest?base=EUR")
             }
+        }
+    }
+
+    @Test
+    fun requestBodyTest() {
+        val networkApiProvider: NetworkApiProviderInterface = TestNetworkApiProvider(mockWebServer.url("").toString())
+        runBlocking {
+            val responseEur = networkApiProvider.ratesAPI.getRates("EUR")
             Assert.assertEquals(responseEur.isSuccessful, true)
             var ratesModel = responseEur.body()
             Assert.assertNotNull(ratesModel)
@@ -70,10 +70,6 @@ class RatesTest {
             Assert.assertEquals(ratesModel, testSuccessRatesModelForEur)
 
             val responseAud = networkApiProvider.ratesAPI.getRates("AUD")
-            mockWebServer.takeRequest().also { recordedRequest ->
-                Assert.assertEquals(recordedRequest.method, "GET")
-                Assert.assertEquals(recordedRequest.path, "/latest?base=AUD")
-            }
             Assert.assertEquals(responseAud.isSuccessful, true)
             ratesModel = responseAud.body()
             Assert.assertNotNull(ratesModel)

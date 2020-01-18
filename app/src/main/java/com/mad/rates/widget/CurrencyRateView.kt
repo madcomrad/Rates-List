@@ -1,5 +1,6 @@
-package com.mad.rates
+package com.mad.rates.widget
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
@@ -9,6 +10,10 @@ import androidx.appcompat.widget.AppCompatEditText
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.setPadding
+import androidx.core.widget.doAfterTextChanged
+import com.mad.rates.R
+import com.mad.rates.ZERO
+import com.mad.rates.isPoint
 
 class CurrencyRateView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : ConstraintLayout(context, attrs, defStyleAttr) {
 

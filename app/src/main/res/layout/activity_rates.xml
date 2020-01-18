@@ -5,11 +5,11 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.mad.rates.RatesViewAnimator
+    <com.mad.rates.widget.RatesViewAnimator
         android:id="@+id/contentContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".RatesActivity">
+        tools:context=".view.RatesActivity">
 
         <include layout="@layout/progress_layout_full_size" />
 
@@ -17,6 +17,6 @@
 
         <include layout="@layout/error_layout" />
 
-    </com.mad.rates.RatesViewAnimator>
+    </com.mad.rates.widget.RatesViewAnimator>
 
 </LinearLayout>

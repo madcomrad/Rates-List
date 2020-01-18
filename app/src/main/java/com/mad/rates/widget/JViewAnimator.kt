@@ -1,4 +1,4 @@
-package com.mad.rates
+package com.mad.rates.widget
 
 import android.content.Context
 import android.util.AttributeSet

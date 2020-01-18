@@ -23,7 +23,7 @@ private const val EMPTY_STRING = ""
 
 private const val DOT = '.'
 private const val COMMA = ','
-private const val ZERO = '0'
+const val ZERO = '0'
 
 sealed class Result<T> {
     class Success<T>(val data: T) : Result<T>()
@@ -40,7 +40,7 @@ fun <T> LiveData<T>.observeNonNull(owner: LifecycleOwner, f: (T) -> Unit) {
     this.observe(owner, Observer<T> { t -> t?.let(f) })
 }
 
-private fun Char.isPoint(): Boolean = this == DOT || this == COMMA
+fun Char.isPoint(): Boolean = this == DOT || this == COMMA
 
 class LeadingZeroesInputFilter : InputFilter {
     override fun filter(source: CharSequence, start: Int, end: Int, dest: Spanned, dstart: Int, dend: Int): CharSequence? {
@@ -60,7 +60,6 @@ class CurrencyFormatInputFilter : InputFilter {
     }
 
     override fun filter(source: CharSequence, start: Int, end: Int, dest: Spanned, dstart: Int, dend: Int): CharSequence? {
-//        Log.d("InputFilter", "source=$source, start=$start, end=$end, dest=$dest, dstart=$dstart, dend=$dend")
         if (end > start) {
             val resultingTxt = (dest.substring(0, dstart) + source.subSequence(start, end) + dest.substring(dend))
             return resultingTxt.indexOfFirst { char -> char.isPoint() }.takeIf { it != -1 }?.let { pointIndex ->
